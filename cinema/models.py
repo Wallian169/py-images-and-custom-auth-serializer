@@ -1,4 +1,4 @@
-import os
+import pathlib
 import uuid
 
 from django.conf import settings
@@ -39,12 +39,10 @@ class Actor(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-def movie_image_path(instance: "Movie", filename):
-    _, ext = os.path.splitext(filename)
-
-    filename = f"{slugify(instance.title)}-{uuid.uuid4()}.{ext}"
-
-    return os.path.join("uploads/movies/", filename)
+def movie_image_path(instance: "Movie", filename: str) -> pathlib.Path:
+    filename = (f"{slugify(instance.title)}-{uuid.uuid4()}"
+                + pathlib.Path(filename).suffix)
+    return pathlib.Path("uploads/movies/") / pathlib.Path(filename)
 
 
 class Movie(models.Model):
